@@ -1,0 +1,33 @@
+jobs:
+- name: run-on-commit
+  public: true
+  plan:
+  - get: repo
+    trigger: true
+  - task: build
+    config:
+
+      platform: linux
+      image_resource:
+        type: docker-image
+        source: { repository: maven }
+
+      inputs:
+      - name: repo
+
+      run:
+        path: /bin/sh
+        args:
+        - -c
+        - |
+          echo $PWD
+          cd repo
+          mvn verify
+          
+
+resources:  
+- name: repo
+  type: git
+  icon: github-circle
+  source:
+    uri: git@github.com:oneilrob/spring-data-rest.git
